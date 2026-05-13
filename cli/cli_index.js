@@ -20,6 +20,7 @@ import { searchTool } from '../tools/search/index.js';
 import { patchTool } from '../tools/patch/index.js';
 import { gitTool } from '../tools/git.js';
 import { webTool } from '../tools/web.js';
+import { systemTool } from '../tools/system/index.js';
 import { bus, EVENTS } from '../core/event_bus.js';
 
 async function selectProjectFolder(question) {
@@ -109,7 +110,7 @@ export async function runCLI() {
   console.log(chalk.bold.green(`\n🗂  Workspace: ${projectDir}\n`));
 
   let sandbox = new Sandbox(projectDir);
-  let executor = new Executor([shellTool, filesTool, searchTool, patchTool, gitTool, webTool], sandbox);
+  let executor = new Executor([shellTool, filesTool, searchTool, patchTool, gitTool, webTool, systemTool], sandbox);
   const memory = new MemoryManager();
 
   // --- Provider selection ---
@@ -221,7 +222,7 @@ export async function runCLI() {
         const newDir = await selectProjectFolder(question);
         projectDir = newDir;
         sandbox = new Sandbox(newDir);
-        executor = new Executor([shellTool, filesTool, searchTool, patchTool, gitTool, webTool], sandbox);
+        executor = new Executor([shellTool, filesTool, searchTool, patchTool, gitTool, webTool, systemTool], sandbox);
         orchestrator = new Orchestrator(provider, executor, memory, null, reflection, contextMgr);
         console.log(chalk.bold.green(`\n🗂  Workspace changed to: ${newDir}\n`));
         continue;
