@@ -5,7 +5,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "start": "node index.js",
+    "start": "node server.js",
     "dev": "node index.js",
     "build": "node --check index.js",
     "server": "node server.js",
@@ -20,6 +20,7 @@
     "openai": "^4.28.0",
     "ora": "^8.0.1",
     "readline-sync": "^1.4.10",
-    "simple-git": "^3.22.0"
+    "simple-git": "^3.22.0",
+    "cors": "^2.8.5"
   }
 }
