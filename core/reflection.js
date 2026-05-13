@@ -19,6 +19,28 @@ export class ReflectionSystem {
       } else if (result.status === 'timeout') {
          advice = "Process timed out. Ensure the command does not prompt for user input recursively or hang interactively.";
       }
+    } else if (action.tool === 'files') {
+      if (result.message && result.message.includes('not found')) {
+        advice = "File or directory not found. Use 'files' with action:'list' to confirm the path first.";
+      } else if (result.message && result.message.includes('Security Violation')) {
+        advice = "Path is outside the sandbox. Only use relative paths within the project workspace.";
+      }
+    } else if (action.tool === 'search') {
+      if (result.status === 'not_found') {
+        advice = "Search returned no results. Try a shorter or more general query, or use action:'file' to search by filename instead.";
+      }
+    } else if (action.tool === 'git_tool') {
+      if (result.message && result.message.includes('not a git repository')) {
+        advice = "The workspace is not a git repository. Run execute_shell with 'git init' first.";
+      } else if (result.message && result.message.includes('nothing to commit')) {
+        advice = "Nothing to commit — working tree is clean. Use git_tool status to verify changes exist.";
+      }
+    } else if (action.tool === 'web') {
+      if (result.message && result.message.includes('timed out')) {
+        advice = "Web request timed out. Try a different URL or a simpler search query.";
+      } else if (result.message && result.message.includes('Too many redirects')) {
+        advice = "URL has too many redirects. Try the direct canonical URL.";
+      }
     } else if (action.tool === 'patch_file') {
       requiresRollback = true;
       if (result.message && result.message.includes('Search string not found')) {
