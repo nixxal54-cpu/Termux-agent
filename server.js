@@ -11,11 +11,29 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Initialize AI Client using Groq's OpenAI-compatible endpoint
-const ai = new OpenAI({
-  apiKey: process.env.GROQ_API_KEY,
-  baseURL: "https://api.groq.com/openai/v1",
-});
+// Provider configs — add more providers here as needed
+const PROVIDERS = {
+  groq: {
+    baseURL: 'https://api.groq.com/openai/v1',
+    apiKey: () => process.env.GROQ_API_KEY,
+    defaultModel: 'llama-3.3-70b-versatile',
+  },
+  gemini: {
+    baseURL: 'https://generativelanguage.googleapis.com/v1beta/openai/',
+    apiKey: () => process.env.GEMINI_API_KEY,
+    defaultModel: 'gemini-2.0-flash',
+  },
+};
+
+function getClient(provider) {
+  const cfg = PROVIDERS[provider] || PROVIDERS.groq;
+  return new OpenAI({ apiKey: cfg.apiKey(), baseURL: cfg.baseURL });
+}
+
+function resolveModel(provider, model) {
+  const cfg = PROVIDERS[provider] || PROVIDERS.groq;
+  return model || cfg.defaultModel;
+}
 
 // Store active frontend connections
 let activeClients =[];
@@ -46,22 +64,23 @@ const sleep = (ms) => new Promise(r => setTimeout(r, ms));
 
 // --- 2. LOGIC ENDPOINT (Frontend sends the task here) ---
 app.post('/run', async (req, res) => {
-  const { task } = req.body;
+  const { task, provider = 'groq', model } = req.body;
   res.json({ status: 'Agent Started' });
 
   try {
     emitToUI({ type: 'token', pct: 10 });
 
     // --- STATE: ANALYZING ---
+    const ai = getClient(provider);
+    const resolvedModel = resolveModel(provider, model);
     emitToUI({ type: 'state', state: 'ANALYZING' });
-    emitToUI({ type: 'thought', text: `Received request: "${task}". Asking Groq for an approach...`, state: 'ANALYZING' });
-    
-    // Call Groq AI
+    emitToUI({ type: 'thought', text: `Received: "${task}" — Using ${provider.toUpperCase()} / ${resolvedModel}`, state: 'ANALYZING' });
+
     const analysis = await ai.chat.completions.create({
-      model: "llama-3.1-70b-versatile", // Using a known valid model name
+      model: resolvedModel,
       messages: [
-        { role: "system", content: "You are a terminal agent. Explain how you will solve the user's task in exactly one concise sentence." },
-        { role: "user", content: task }
+        { role: 'system', content: 'You are a terminal agent. Explain how you will solve the user\'s task in exactly one concise sentence.' },
+        { role: 'user', content: task }
       ]
     });
     
