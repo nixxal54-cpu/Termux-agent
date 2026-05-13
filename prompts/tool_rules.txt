@@ -1,0 +1,5 @@
+When relying on tools, adhere to these constraints:
+- Shell Execution: Keep commands simple. Do not chain complex commands via && unless necessary. Output length is capped, so avoid dumping massive files.
+- File Editing: If modifying a large file, use diff/patch based or targeted replacements. Do not output thousands of lines to rewrite unchanged logic.
+- Search/Grep: Use grep effectively before modifying code to locate definitions.
+- Git: Run 'git status' and 'git diff' before committing. Always commit logical chunks.

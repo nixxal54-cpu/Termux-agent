@@ -1,0 +1,13 @@
+{
+  "provider": "groq",
+  "model": "llama-3.3-70b-versatile",
+  "temperature": 0.2,
+  "maxTokens": 4096,
+  "retries": 3,
+  "timeoutMs": 60000,
+  "system": {
+    "safeMode": true,
+    "allowDangerousCommands": false,
+    "memoryLimit": 10
+  }
+}

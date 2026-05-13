@@ -1,0 +1,23 @@
+{
+  "name": "termux-agent",
+  "version": "1.0.0",
+  "description": "Production-style autonomous coding agent for Termux",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "node index.js",
+    "build": "node --check index.js"
+  },
+  "dependencies": {
+    "chalk": "^5.3.0",
+    "cors": "^2.8.6",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.2",
+    "fs-extra": "^11.2.0",
+    "openai": "^4.28.0",
+    "ora": "^8.0.1",
+    "readline-sync": "^1.4.10",
+    "simple-git": "^3.22.0"
+  }
+}
